@@ -1,0 +1,7 @@
+﻿@using Microsoft.CodeAnalysis
+@using Newtonsoft.Json
+<h2>API response</h2>
+
+<pre>
+@Html.Raw(@ViewBag.Json.ToString().Trim().Replace(",",",</br>").Replace("{", "{</br>").Replace("}", "</br>}"))
+</pre>
