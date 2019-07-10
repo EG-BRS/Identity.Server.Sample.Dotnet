@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using HybridAndClientCredentials.Core.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using HybridAndClientCredentials.Core.Configuration.Constants;
 
 namespace HybridAndClientCredentials.Core.Controllers
 {
@@ -15,14 +11,16 @@ namespace HybridAndClientCredentials.Core.Controllers
         {
             return View();
         }
-        public async Task LogOut()
+
+        [Authorize]
+        public IActionResult Login()
         {
-            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index");
         }
 
-        public IActionResult Error()
+        public IActionResult Logout()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, AuthenticationConstants.OidcAuthenticationScheme });
         }
     }
 }

@@ -1,98 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
-using HybridAndClientCredentials.Core.Models;
-using HybridAndClientCredentials.Core.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
+using System.Net.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using HybridAndClientCredentials.Core.Configuration.Constants;
+using HybridAndClientCredentials.Core.Configuration;
+using HybridAndClientCredentials.Core.Configuration.Interfaces;
+using HybridAndClientCredentials.Core.Services;
 
 namespace HybridAndClientCredentials.Core
 {
-
-    public static class CredentialsBuilder
-    {
-        public static Credentials BuildCredentials(IConfiguration config)
-        {
-            var settings = config.GetSection("ServiceSettings");
-            return new Credentials()
-            {
-                IdentityServerEndpoint = settings["IdentityServerEndpoint"],
-                ClientId = settings["ClientId"],
-                Secret = settings["Secret"]
-            };
-        }
-    }
-
-
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public IConfigurationRoot Configuration { get; }
 
-        public IConfiguration Configuration { get; }
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(env.ContentRootPath)
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddOptions();
+            services.Configure<AuthConfiguration>(Configuration.GetSection("AuthConfiguration"));
+            services.Configure<ApiEndpoints>(Configuration.GetSection("ApiEndpoints"));
+            services.TryAddSingleton<IRootConfiguration, RootConfiguration>();
+            services.AddTransient<IXenaService, XenaService>();
+            var rootConfiguration = services.BuildServiceProvider().GetService<IRootConfiguration>();
+            services.AddSingleton<IDiscoveryCache>(r =>
+            {
+                var factory = r.GetRequiredService<IHttpClientFactory>();
+                return new DiscoveryCache(rootConfiguration.AuthConfiguration.Authority, () => factory.CreateClient());
+            });
+
             services.AddMvc();
-            
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
-            var cred = CredentialsBuilder.BuildCredentials(Configuration);
-            services.AddSingleton(cred);
-
-            XenaHttpClient.Initialize(Configuration["ServiceSettings:IdentityServerEndpoint"]);
-            services.AddTransient<XenaHttpClient>();
-            
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = AuthenticationConstants.OidcAuthenticationScheme;
                 })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(AuthenticationConstants.OidcAuthenticationScheme, options =>
                 {
-                    options.SignInScheme = "Cookies";
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.ResponseType = AuthenticationConstants.OidcResponseType;
 
-                    options.Authority = Configuration["ServiceSettings:IdentityServerEndpoint"];
-                    options.RequireHttpsMetadata = false;
-
-                    options.ClientId = Configuration["ServiceSettings:ClientId"];
-                    options.ClientSecret = Configuration["ServiceSettings:secret"];
-                    options.ResponseType = "code id_token";
+                    options.Authority = rootConfiguration.AuthConfiguration.Authority;
+                    options.ClientId = rootConfiguration.AuthConfiguration.ClientId;
+                    options.ClientSecret = rootConfiguration.AuthConfiguration.ClientSecret;
 
                     options.SaveTokens = true;
+                    options.RequireHttpsMetadata = false;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.Scope.Add("profile");
                     options.Scope.Add("testapi");
+                    options.Scope.Add("offline_access"); // needed for refresh token
                 });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseBrowserLink();
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
