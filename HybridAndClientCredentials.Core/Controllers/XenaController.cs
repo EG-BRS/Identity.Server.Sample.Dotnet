@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using HybridAndClientCredentials.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace HybridAndClientCredentials.Core.Controllers
 {
+    [Authorize]
     public class XenaController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -17,28 +21,32 @@ namespace HybridAndClientCredentials.Core.Controllers
             _xenaService = xenaService;
         }
 
-        [Authorize]
-        public async Task<IActionResult> CallXena()
+        public async Task<IActionResult> UserFiscalSetup()
         {
             var result = await _xenaService.GetUserFiscalSetupAsync();
             ViewBag.Json = result;
             return View("json");
         }
 
-        [Authorize]
-        public async Task<IActionResult> XenaMembership()
+        public async Task<IActionResult> UserMembership()
         {
             var result = await _xenaService.GetUserMembershipAsync();
             ViewBag.Json = result;
             return View("json");
         }
 
-        [Authorize]
-        public async Task<IActionResult> GetApps()
+        public async Task<IActionResult> UserApps()
         {
-            var fiscalId = HttpContext.User?.FindFirst("xena_fiscal_id")?.Value;
-            var result = await _xenaService.GetFiscalXenaAppsAsync(fiscalId);
-            ViewBag.Json = result;
+            // Get fiscal setup for current user
+            var fiscalSetup = await _xenaService.GetUserFiscalSetupAsync();
+            // Get fiscal ids from fiscal setup
+            dynamic obj = JObject.Parse(fiscalSetup);
+            var fiscalTasks = new List<Task<string>>();
+            // Get each app data from xena api
+            foreach (var entity in obj.Entities)
+                fiscalTasks.Add(_xenaService.GetFiscalXenaAppsAsync(entity.Id.ToString()));
+            await Task.WhenAll(fiscalTasks);
+            ViewBag.Json = string.Join("****", fiscalTasks.Select(x => x.Result));
             return View("json");
         }
     }

@@ -25,21 +25,21 @@ namespace HybridAndClientCredentials.Core.Services
         public async Task<string> GetUserFiscalSetupAsync()
         {
             HttpClient client = await SetupClientWithToken();
-            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/Api/User/FiscalSetup?forceNoPaging=true");
+            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/User/FiscalSetup?forceNoPaging=true");
             return result;
         }
 
         public async Task<string> GetUserMembershipAsync()
         {
             HttpClient client = await SetupClientWithToken();
-            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/Api/User/XenaUserMembership?ForceNoPaging=true");
+            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/User/XenaUserMembership?ForceNoPaging=true");
             return result;
         }
 
         public async Task<string> GetFiscalXenaAppsAsync(string fiscalId) 
         {
             HttpClient client = await SetupClientWithToken();
-            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/Api/Fiscal/{fiscalId}/XenaApp");
+            var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/Fiscal/{fiscalId}/XenaApp");
             return result;
         }
 

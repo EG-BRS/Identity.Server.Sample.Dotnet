@@ -1,6 +1,9 @@
-﻿using IdentityModel.Client;
+﻿using HybridAndClientCredentials.Core.Configuration;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
@@ -9,20 +12,22 @@ using System.Threading.Tasks;
 
 namespace HybridAndClientCredentials.Core.Middleware
 {
+    /// <summary>
+    /// Check if access token needs renew on each call
+    /// </summary>
     public class AutomaticSilentRenewMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly string _clientId;
         private readonly string _clientSecret;
-        private readonly string _cookieSchemeName;
+        private readonly string _cookieSchemeName = CookieAuthenticationDefaults.AuthenticationScheme;
         private readonly IDiscoveryCache _discoveryCache;
 
-        public AutomaticSilentRenewMiddleware(IDiscoveryCache discoveryCache, RequestDelegate next, string clientId, string clientSecret, string cookieSchemeName)
+        public AutomaticSilentRenewMiddleware(IDiscoveryCache discoveryCache, RequestDelegate next, IOptions<AuthConfiguration> authConfig)
         {
             _next = next;
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _cookieSchemeName = cookieSchemeName;
+            _clientId = authConfig.Value.ClientId;
+            _clientSecret = authConfig.Value.ClientSecret;
             _discoveryCache = discoveryCache;
         }
 
