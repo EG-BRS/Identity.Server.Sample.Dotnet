@@ -28,5 +28,7 @@ namespace HybridAndClientCredentials.Core.Controllers
         {
             return View();
         }
+
+        public IActionResult Terms() => View();
     }
 }
