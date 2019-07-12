@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using HybridAndClientCredentials.Core.Configuration.Constants;
 using HybridAndClientCredentials.Core.Configuration;
-using HybridAndClientCredentials.Core.Configuration.Interfaces;
 using HybridAndClientCredentials.Core.Services;
 using HybridAndClientCredentials.Core.Extensions;
 using Microsoft.Extensions.Options;
@@ -52,10 +50,10 @@ namespace HybridAndClientCredentials.Core
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = AuthenticationConstants.OidcAuthenticationScheme;
+                    options.DefaultChallengeScheme = AuthenticationConstants.XenaOidcAuthenticationScheme;
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddOpenIdConnect(AuthenticationConstants.OidcAuthenticationScheme, options =>
+                .AddOpenIdConnect(AuthenticationConstants.XenaOidcAuthenticationScheme, options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.ResponseType = AuthenticationConstants.OidcResponseType;

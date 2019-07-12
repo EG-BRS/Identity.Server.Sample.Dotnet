@@ -21,7 +21,7 @@ namespace HybridAndClientCredentials.Core.Controllers
         public IActionResult Logout()
         {
             // Signout from your app and xena login provider
-            return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, AuthenticationConstants.OidcAuthenticationScheme });
+            return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, AuthenticationConstants.XenaOidcAuthenticationScheme });
         }
 
         public IActionResult LogoutRedirect()
