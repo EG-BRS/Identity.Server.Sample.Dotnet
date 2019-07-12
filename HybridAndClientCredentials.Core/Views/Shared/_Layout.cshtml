@@ -1,11 +1,4 @@
 ﻿@using HybridAndClientCredentials.Core.Extensions;
-@{
-    string usrname = null;
-    if (!true.Equals(ViewData["signed-out"]))
-    {
-        usrname = Context.User.GetDisplayName();
-    }
-}
 
 <!DOCTYPE html>
 <html>
@@ -53,9 +46,9 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @if (!string.IsNullOrWhiteSpace(usrname))
+                    @if (Context.User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-action="Logout" asp-controller="Home">Logout: @usrname</a></li>
+                        <li><a asp-action="Logout" asp-controller="Home">Logout : @Context.User.GetPreferedDisplayName()</a></li>
                     }
                     else
                     {

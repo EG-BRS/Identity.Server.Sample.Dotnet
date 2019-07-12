@@ -60,6 +60,8 @@ namespace HybridAndClientCredentials.Core
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.ResponseType = AuthenticationConstants.OidcResponseType;
 
+                    options.SignedOutCallbackPath = "/signout-idsrv";
+                    options.SignedOutRedirectUri = "/Home/LogoutRedirect";
                     options.Authority = authConfiguration.Authority;
                     options.ClientId = authConfiguration.ClientId;
                     options.ClientSecret = authConfiguration.ClientSecret;

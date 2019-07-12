@@ -1,9 +1,5 @@
 ﻿using IdentityModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace HybridAndClientCredentials.Core.Extensions
 {
@@ -12,6 +8,14 @@ namespace HybridAndClientCredentials.Core.Extensions
         public static string GetDisplayName(this ClaimsPrincipal principal)
         {
             var nameClaim = principal.FindFirst(JwtClaimTypes.Name);
+            if (nameClaim != null) return nameClaim.Value;
+
+            return string.Empty;
+        }
+
+        public static string GetPreferedDisplayName(this ClaimsPrincipal principal)
+        {
+            var nameClaim = principal.FindFirst(JwtClaimTypes.PreferredUserName);
             if (nameClaim != null) return nameClaim.Value;
 
             return string.Empty;
