@@ -11,6 +11,8 @@ using HybridAndClientCredentials.Core.Configuration;
 using HybridAndClientCredentials.Core.Services;
 using HybridAndClientCredentials.Core.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
+using IdentityModel;
 
 namespace HybridAndClientCredentials.Core
 {
@@ -58,8 +60,9 @@ namespace HybridAndClientCredentials.Core
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.ResponseType = AuthenticationConstants.OidcResponseType;
 
-                    options.SignedOutCallbackPath = "/signout-idsrv";
+                    options.SignedOutCallbackPath = "/signout-sample-xena";
                     options.SignedOutRedirectUri = "/Home/LogoutRedirect";
+
                     options.Authority = authConfiguration.Authority;
                     options.ClientId = authConfiguration.ClientId;
                     options.ClientSecret = authConfiguration.ClientSecret;
@@ -67,9 +70,12 @@ namespace HybridAndClientCredentials.Core
                     options.SaveTokens = true;
                     options.RequireHttpsMetadata = false;
                     options.GetClaimsFromUserInfoEndpoint = true;
-                    options.Scope.Add("profile");
+
+                    options.Scope.Add("profile"); 
                     options.Scope.Add("testapi");
                     options.Scope.Add("offline_access");
+
+                    options.ClaimActions.MapJsonKey(JwtClaimTypes.PreferredUserName, JwtClaimTypes.PreferredUserName);
                 });
         }
 
