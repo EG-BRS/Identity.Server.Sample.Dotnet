@@ -93,7 +93,7 @@ namespace HybridAndClientCredentials.Core
 
             app.UseStaticFiles();
 
-            // You can use middleware or implement automatic renew to cookie middleware
+            // You can use this middleware or add automatic renew inside cookie middleware
             app.UseAutomaticSilentRenew();
             app.UseAccessTokenLifetime();
 
