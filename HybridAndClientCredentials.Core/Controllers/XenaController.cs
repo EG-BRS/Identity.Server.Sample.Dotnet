@@ -1,80 +1,52 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using HybridAndClientCredentials.Core.Extensions;
-using HybridAndClientCredentials.Core.Models;
 using HybridAndClientCredentials.Core.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace HybridAndClientCredentials.Core.Controllers
 {
+    [Authorize]
     public class XenaController : Controller
     {
-        private readonly XenaHttpClient _client;
-        private readonly Credentials _credentials;
         private readonly IConfiguration _configuration;
-        
+        private readonly IXenaService _xenaService;
 
-        public XenaController(XenaHttpClient client, Credentials credentials, IConfiguration configuration)
+        public XenaController(IConfiguration configuration, IXenaService xenaService)
         {
-            _client = client;
-            _credentials = credentials;
             _configuration = configuration;
-            
+            _xenaService = xenaService;
         }
 
-        public IActionResult Error()
+        public async Task<IActionResult> UserFiscalSetup()
         {
-            return View();
-        }
-
-        [Authorize]
-        public async Task<IActionResult> CallXena()
-        {
-            var accessToken = await HttpContext.GetTokenAsync(IdentityServerConstants.HttpContextHeaders.AccessToken);
-            var client = new HttpClient();
-            client.SetBearerToken(accessToken);
-            var content = await client.GetStringAsync($"{_configuration["ServiceSettings:XenaAPIEndpoint"]}/Api/User/FiscalSetup?forceNoPaging=true");
-            ViewBag.Json = content;
+            var result = await _xenaService.GetUserFiscalSetupAsync();
+            ViewBag.Json = result;
             return View("json");
         }
 
-        [Authorize]
-        public async Task<IActionResult> XenaMembership()
+        public async Task<IActionResult> UserMembership()
         {
-            var accessToken = await HttpContext.GetTokenAsync(IdentityServerConstants.HttpContextHeaders.AccessToken);
-            var client = new HttpClient();
-
-            var x = _configuration["ServiceSettings:XenaAPIEndpoint"];
-
-            client.SetBearerToken(accessToken);
-            try
-            {
-                var content = await client.GetStringAsync($"{_configuration["ServiceSettings:XenaAPIEndpoint"]}/Api/User/XenaUserMembership?ForceNoPaging=true");
-                ViewBag.Json = content;
-                return View("json");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var result = await _xenaService.GetUserMembershipAsync();
+            ViewBag.Json = result;
+            return View("json");
         }
 
-        [Authorize]
-        public async Task<IActionResult> GetApps()
+        public async Task<IActionResult> UserApps()
         {
-            var fiscalId = HttpContext.User?.FindFirst("xena_fiscal_id")?.Value;
-
-            var accessToken = await HttpContext.GetTokenAsync(IdentityServerConstants.HttpContextHeaders.AccessToken);
-            var client = new HttpClient();
-            client.SetBearerToken(accessToken);
-            var content = await client.GetStringAsync($"{_configuration["ServiceSettings:XenaAPIEndpoint"]}/Api/Fiscal/{fiscalId}/XenaApp");
-            ViewBag.Json = content;
+            // Get fiscal setup for current user
+            var fiscalSetup = await _xenaService.GetUserFiscalSetupAsync();
+            // Get fiscal ids from fiscal setup
+            dynamic obj = JObject.Parse(fiscalSetup);
+            var fiscalTasks = new List<Task<string>>();
+            // Get each app data from xena api
+            foreach (var entity in obj.Entities)
+                fiscalTasks.Add(_xenaService.GetFiscalXenaAppsAsync(entity.Id.ToString()));
+            await Task.WhenAll(fiscalTasks);
+            ViewBag.Json = string.Join("****", fiscalTasks.Select(x => x.Result));
             return View("json");
         }
     }

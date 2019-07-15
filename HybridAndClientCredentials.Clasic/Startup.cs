@@ -31,7 +31,7 @@ namespace HybridAndClientCredentials.Clasic
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
-                ClientId = "mvc.owin.hybrid",
+                ClientId = "712a8496-58ce-446c-8b86-05c4efcf30fc.xena.biz",
                 Authority = Constants.BaseAddress,
                 RedirectUri = "https://localhost:55000/",
                 PostLogoutRedirectUri = "https://localhost:55000/",

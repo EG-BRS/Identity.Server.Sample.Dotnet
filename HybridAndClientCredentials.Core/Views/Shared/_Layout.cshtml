@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using HybridAndClientCredentials.Core.Extensions;
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -31,17 +33,27 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></li>                    
-                </ul>
-                <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="" asp-controller="Token" asp-action="Index">Token check</a></li>
+                    </ul>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Xena <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a asp-action="XenaMembership" asp-controller="Xena">MemberShip</a></li>
-                            <li><a asp-action="CallXena" asp-controller="Xena">Request FiscalSetup</a></li>
-                            <li><a asp-action="GetApps" asp-controller="Xena">Apps</a></li>
+                            <li><a asp-action="UserMembership" asp-controller="Xena">User MemberShip</a></li>
+                            <li><a asp-action="UserFiscalSetup" asp-controller="Xena">User FiscalSetup</a></li>
+                            <li><a asp-action="UserApps" asp-controller="Xena">User Apps</a></li>
                         </ul>
                     </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-action="Logout" asp-controller="Home">Logout : @Context.User.GetPreferedDisplayName()</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-action="Login" asp-controller="Home">Login</a></li>
+                    }
                 </ul>
             </div>
         </div>

@@ -1,98 +1,88 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
-using HybridAndClientCredentials.Core.Models;
-using HybridAndClientCredentials.Core.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
+using System.Net.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using HybridAndClientCredentials.Core.Configuration.Constants;
+using HybridAndClientCredentials.Core.Configuration;
+using HybridAndClientCredentials.Core.Services;
+using HybridAndClientCredentials.Core.Extensions;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
+using IdentityModel;
 
 namespace HybridAndClientCredentials.Core
 {
-
-    public static class CredentialsBuilder
-    {
-        public static Credentials BuildCredentials(IConfiguration config)
-        {
-            var settings = config.GetSection("ServiceSettings");
-            return new Credentials()
-            {
-                IdentityServerEndpoint = settings["IdentityServerEndpoint"],
-                ClientId = settings["ClientId"],
-                Secret = settings["Secret"]
-            };
-        }
-    }
-
-
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public IConfigurationRoot Configuration { get; }
 
-        public IConfiguration Configuration { get; }
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(env.ContentRootPath)
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddOptions();
+            services.Configure<AuthConfiguration>(Configuration.GetSection("AuthConfiguration"));
+            services.Configure<ApiEndpoints>(Configuration.GetSection("ApiEndpoints"));
+            services.AddTransient<IXenaService, XenaService>();
+            var authConfiguration = services.BuildServiceProvider().GetService<IOptions<AuthConfiguration>>().Value;
+            services.AddSingleton<IDiscoveryCache>(r =>
+            {
+                var factory = r.GetRequiredService<IHttpClientFactory>();
+                return new DiscoveryCache(authConfiguration.Authority, () => factory.CreateClient());
+            });
+
             services.AddMvc();
-            
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
-            var cred = CredentialsBuilder.BuildCredentials(Configuration);
-            services.AddSingleton(cred);
-
-            XenaHttpClient.Initialize(Configuration["ServiceSettings:IdentityServerEndpoint"]);
-            services.AddTransient<XenaHttpClient>();
-            
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = AuthenticationConstants.XenaOidcAuthenticationScheme;
                 })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(AuthenticationConstants.XenaOidcAuthenticationScheme, options =>
                 {
-                    options.SignInScheme = "Cookies";
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.ResponseType = AuthenticationConstants.OidcResponseType;
 
-                    options.Authority = Configuration["ServiceSettings:IdentityServerEndpoint"];
-                    options.RequireHttpsMetadata = false;
+                    options.SignedOutCallbackPath = "/signout-sample-xena";
+                    options.SignedOutRedirectUri = "/Home/LogoutRedirect";
 
-                    options.ClientId = Configuration["ServiceSettings:ClientId"];
-                    options.ClientSecret = Configuration["ServiceSettings:secret"];
-                    options.ResponseType = "code id_token";
+                    options.Authority = authConfiguration.Authority;
+                    options.ClientId = authConfiguration.ClientId;
+                    options.ClientSecret = authConfiguration.ClientSecret;
 
                     options.SaveTokens = true;
+                    options.RequireHttpsMetadata = false;
                     options.GetClaimsFromUserInfoEndpoint = true;
-                    options.Scope.Add("profile");
+
+                    options.Scope.Add("profile"); 
                     options.Scope.Add("testapi");
+                    options.Scope.Add("offline_access");
+
+                    options.ClaimActions.MapJsonKey(JwtClaimTypes.PreferredUserName, JwtClaimTypes.PreferredUserName);
                 });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseBrowserLink();
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -102,6 +92,10 @@ namespace HybridAndClientCredentials.Core
             app.UseAuthentication();
 
             app.UseStaticFiles();
+
+            // You can use this middleware or add automatic renew inside cookie middleware
+            app.UseAutomaticSilentRenew();
+            app.UseAccessTokenLifetime();
 
             app.UseMvc(routes =>
             {
