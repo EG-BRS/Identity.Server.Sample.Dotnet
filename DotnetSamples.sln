@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HybridAndClientCredentials.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridAndClientCredentials.Clasic", "HybridAndClientCredentials.Clasic\HybridAndClientCredentials.Clasic.csproj", "{53F688C4-97A3-4253-B79C-41E3EA6352FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplicitMVC.Core", "ImplicitAndClientCredentials.Core\ImplicitMVC.Core.csproj", "{FABC955B-1563-4152-B3C5-B2FB30183892}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplicitMVC.Core", "ImplicitMVC.Core\ImplicitMVC.Core.csproj", "{FABC955B-1563-4152-B3C5-B2FB30183892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
