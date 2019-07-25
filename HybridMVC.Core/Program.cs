@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace HybridAndClientCredentials.Core
+namespace HybridMVC.Core
 {
     public class Program
     {

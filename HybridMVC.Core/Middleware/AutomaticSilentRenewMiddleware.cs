@@ -1,4 +1,4 @@
-﻿using HybridAndClientCredentials.Core.Configuration;
+﻿using HybridMVC.Core.Configuration;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
-namespace HybridAndClientCredentials.Core.Middleware
+namespace HybridMVC.Core.Middleware
 {
     /// <summary>
     /// Check if access token needs renew on each call

@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using IdentityModel.Client;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
-using HybridAndClientCredentials.Core.Configuration;
+using HybridMVC.Core.Configuration;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-namespace HybridAndClientCredentials.Core.Controllers
+namespace HybridMVC.Core.Controllers
 {
     [Authorize]
     public class TokenController : Controller

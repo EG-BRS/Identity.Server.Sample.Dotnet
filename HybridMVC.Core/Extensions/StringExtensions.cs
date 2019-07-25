@@ -3,7 +3,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 
-namespace HybridAndClientCredentials.Core.Extensions
+namespace HybridMVC.Core.Extensions
 {
     public static class StringExtensions
     {

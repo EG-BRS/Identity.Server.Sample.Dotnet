@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HybridAndClientCredentials.Core.Services;
+using HybridMVC.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
-namespace HybridAndClientCredentials.Core.Controllers
+namespace HybridMVC.Core.Controllers
 {
     [Authorize]
     public class XenaController : Controller

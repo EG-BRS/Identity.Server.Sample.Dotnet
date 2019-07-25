@@ -1,6 +1,6 @@
-﻿using HybridAndClientCredentials.Core.Configuration.Interfaces;
+﻿using HybridMVC.Core.Configuration.Interfaces;
 
-namespace HybridAndClientCredentials.Core.Configuration
+namespace HybridMVC.Core.Configuration
 {
     public class AuthConfiguration : IAuthConfiguration
     {

@@ -1,4 +1,4 @@
-﻿namespace HybridAndClientCredentials.Core.Configuration.Interfaces
+﻿namespace HybridMVC.Core.Configuration.Interfaces
 {
     public interface IApiEndpoints
     {

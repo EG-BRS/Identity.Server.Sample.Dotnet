@@ -6,15 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using HybridAndClientCredentials.Core.Configuration.Constants;
-using HybridAndClientCredentials.Core.Configuration;
-using HybridAndClientCredentials.Core.Services;
-using HybridAndClientCredentials.Core.Extensions;
+using HybridMVC.Core.Configuration.Constants;
+using HybridMVC.Core.Configuration;
+using HybridMVC.Core.Services;
+using HybridMVC.Core.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using IdentityModel;
 
-namespace HybridAndClientCredentials.Core
+namespace HybridMVC.Core
 {
     public class Startup
     {
@@ -60,7 +60,6 @@ namespace HybridAndClientCredentials.Core
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.ResponseType = AuthenticationConstants.OidcResponseType;
 
-                    options.SignedOutCallbackPath = "/signout-sample-xena";
                     options.SignedOutRedirectUri = "/Home/LogoutRedirect";
 
                     options.Authority = authConfiguration.Authority;
@@ -71,7 +70,7 @@ namespace HybridAndClientCredentials.Core
                     options.RequireHttpsMetadata = false;
                     options.GetClaimsFromUserInfoEndpoint = true;
 
-                    options.Scope.Add("profile"); 
+                    options.Scope.Add("profile");
                     options.Scope.Add("testapi");
                     options.Scope.Add("offline_access");
 

@@ -1,4 +1,4 @@
-﻿namespace HybridAndClientCredentials.Core.Configuration.Constants
+﻿namespace HybridMVC.Core.Configuration.Constants
 {
     public class AuthenticationConstants
     {

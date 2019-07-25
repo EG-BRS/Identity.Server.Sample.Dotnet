@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace HybridAndClientCredentials.Core.Middleware
+namespace HybridMVC.Core.Middleware
 {
     /// <summary>
     /// Sign out user if Access token is expired

@@ -1,8 +1,8 @@
-﻿using HybridAndClientCredentials.Core.Middleware;
+﻿using HybridMVC.Core.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-namespace HybridAndClientCredentials.Core.Extensions
+namespace HybridMVC.Core.Extensions
 {
     public static class OidcExtensions
     {

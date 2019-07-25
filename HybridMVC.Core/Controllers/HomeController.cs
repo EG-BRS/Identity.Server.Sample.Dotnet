@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using HybridAndClientCredentials.Core.Configuration.Constants;
+using HybridMVC.Core.Configuration.Constants;
 
-namespace HybridAndClientCredentials.Core.Controllers
+namespace HybridMVC.Core.Controllers
 {
     public class HomeController : Controller
     {

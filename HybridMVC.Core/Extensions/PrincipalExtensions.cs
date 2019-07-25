@@ -1,7 +1,7 @@
 ﻿using IdentityModel;
 using System.Security.Claims;
 
-namespace HybridAndClientCredentials.Core.Extensions
+namespace HybridMVC.Core.Extensions
 {
     public static class PrincipalExtensions
     {

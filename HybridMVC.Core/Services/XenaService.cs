@@ -1,5 +1,5 @@
-﻿using HybridAndClientCredentials.Core.Configuration;
-using HybridAndClientCredentials.Core.Configuration.Interfaces;
+﻿using HybridMVC.Core.Configuration;
+using HybridMVC.Core.Configuration.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace HybridAndClientCredentials.Core.Services
+namespace HybridMVC.Core.Services
 {
     public class XenaService : IXenaService
     {

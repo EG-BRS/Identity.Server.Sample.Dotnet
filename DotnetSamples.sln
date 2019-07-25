@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientCredentialsConsole", "ServiceAccountConsole\ClientCredentialsConsole.csproj", "{6CF74AF3-AAC5-4A7A-87F0-C00E5E56D033}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HybridAndClientCredentials.Core", "HybridAndClientCredentials.Core\HybridAndClientCredentials.Core.csproj", "{651DD8F4-D61D-41D7-862B-11287936B751}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HybridMVC.Core", "HybridMVC.Core\HybridMVC.Core.csproj", "{651DD8F4-D61D-41D7-862B-11287936B751}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridAndClientCredentials.Clasic", "HybridAndClientCredentials.Clasic\HybridAndClientCredentials.Clasic.csproj", "{53F688C4-97A3-4253-B79C-41E3EA6352FF}"
 EndProject

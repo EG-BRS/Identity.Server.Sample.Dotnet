@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace HybridAndClientCredentials.Core.Services
+namespace HybridMVC.Core.Services
 {
     public interface IXenaService
     {
