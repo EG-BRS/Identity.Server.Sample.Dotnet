@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridAndClientCredentials.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplicitMVC.Core", "ImplicitMVC.Core\ImplicitMVC.Core.csproj", "{FABC955B-1563-4152-B3C5-B2FB30183892}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImplicitJavascript", "ImplicitJavascript\ImplicitJavascript.csproj", "{0AD96C9E-1882-4900-B806-9C3370DA16F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FABC955B-1563-4152-B3C5-B2FB30183892}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FABC955B-1563-4152-B3C5-B2FB30183892}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FABC955B-1563-4152-B3C5-B2FB30183892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AD96C9E-1882-4900-B806-9C3370DA16F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD96C9E-1882-4900-B806-9C3370DA16F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD96C9E-1882-4900-B806-9C3370DA16F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD96C9E-1882-4900-B806-9C3370DA16F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
