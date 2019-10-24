@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "oidc-client@1.8.2",
+      "destination": "wwwroot/lib/oidc-client/"
+    },
+    {
+      "library": "twitter-bootstrap@3.3.7",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "jquery@3.4.1",
+      "destination": "wwwroot/lib/jquery/"
+    }
+  ]
+}
