@@ -58,10 +58,9 @@ namespace ImplicitMVC.Core
                 .AddOpenIdConnect(AuthenticationConstants.XenaOidcAuthenticationScheme, options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-                    options.SignedOutCallbackPath = "/signout-sample-xena";
-                    options.SignedOutRedirectUri = "/Home/LogoutRedirect";
                     options.ResponseType = AuthenticationConstants.OidcResponseType;
+
+                    options.SignedOutRedirectUri = "/Home/LogoutRedirect";
 
                     options.Authority = authConfiguration.Authority;
                     options.ClientId = authConfiguration.ClientId;
