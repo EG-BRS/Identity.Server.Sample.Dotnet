@@ -1,6 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using HybricMVC.NetFramework.Configuration.Interfaces;
+using HybridMVC.Core.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Configuration;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -9,33 +14,31 @@ namespace HybricMVC.NetFramework.Services
     public class XenaService : IXenaService
     {
         private readonly IApiEndpoints _apiEndpoints;
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly HttpContext _context;
 
-        public XenaService(IOptions<ApiEndpoints> apiEndpointsOptions, IHttpClientFactory httpClientFactory, IHttpContextAccessor contextAccessor)
+        public XenaService()
         {
-            _apiEndpoints = apiEndpointsOptions.Value;
-            _httpClientFactory = httpClientFactory;
-            _context = contextAccessor.HttpContext;
+            _apiEndpoints = new ApiEndpoints() { Xena = ConfigurationManager.AppSettings["XenaApi"] };
+            _context = HttpContext.Current;
         }
 
         public async Task<string> GetUserFiscalSetupAsync()
         {
-            HttpClient client = await SetupClientWithToken();
+            HttpClient client = SetupClientWithToken();
             var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/User/FiscalSetup?forceNoPaging=true");
             return result;
         }
 
         public async Task<string> GetUserMembershipAsync()
         {
-            HttpClient client = await SetupClientWithToken();
+            HttpClient client = SetupClientWithToken();
             var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/User/XenaUserMembership?ForceNoPaging=true");
             return result;
         }
 
         public async Task<string> GetFiscalXenaAppsAsync(string fiscalId)
         {
-            HttpClient client = await SetupClientWithToken();
+            HttpClient client = SetupClientWithToken();
             var result = await client.GetStringAsync($"{_apiEndpoints.Xena}/Fiscal/{fiscalId}/XenaApp");
             return result;
         }
@@ -44,11 +47,11 @@ namespace HybricMVC.NetFramework.Services
         /// Creates HttpClient with header 'Authorization : Bearer {token}'
         /// </summary>
         /// <returns>HttpClient</returns>
-        private async Task<HttpClient> SetupClientWithToken()
+        private HttpClient SetupClientWithToken()
         {
-            var client = _httpClientFactory.CreateClient();
-            var accessToken = await _context.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
-            client.SetBearerToken(accessToken);
+            HttpClient client = new HttpClient();
+            var accessToken = ((ClaimsPrincipal)_context.User).Claims.SingleOrDefault(x => x.Type == OpenIdConnectParameterNames.AccessToken).Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             return client;
         }
     }

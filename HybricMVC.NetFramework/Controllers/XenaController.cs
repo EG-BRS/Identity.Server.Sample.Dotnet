@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Owin.Security.Cookies;
+﻿using HybricMVC.NetFramework.Services;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace HybricMVC.NetFramework.Controllers
@@ -13,12 +10,10 @@ namespace HybricMVC.NetFramework.Controllers
     [Authorize]
     public class XenaController : Controller
     {
-        private readonly IConfiguration _configuration;
         private readonly IXenaService _xenaService;
 
-        public XenaController(IConfiguration configuration, IXenaService xenaService)
+        public XenaController(IXenaService xenaService)
         {
-            _configuration = configuration;
             _xenaService = xenaService;
         }
 

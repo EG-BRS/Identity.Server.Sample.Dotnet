@@ -1,14 +1,11 @@
 ﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
-using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
-using System.Web;
 
 [assembly: OwinStartup(typeof(HybricMVC.NetFramework.Startup))]
 namespace HybricMVC.NetFramework
@@ -17,43 +14,25 @@ namespace HybricMVC.NetFramework
     {
         public void Configuration(IAppBuilder app)
         {
-            //_log.Debug("Startup");
-            var identityServerUrl = "https://localhost:44343/";//ConfigurationManager.AppSettings["IdentityServerUrl"];
-            var basePath = "http://localhost:64832";//ConfigurationManager.AppSettings["BasePath"];
-            var secret = "Secret";//ConfigurationManager.AppSettings["IdSClientSecret"];
-            var clientId = "Hybrid";// ConfigurationManager.AppSettings["IdSClientId"];
-            //app.Use<XForwardedMiddleware>();
+            var identityServerUrl = ConfigurationManager.AppSettings["IdentityServerUrl"];
+            var basePath = ConfigurationManager.AppSettings["ApplicationUrl"];
+            var secret = ConfigurationManager.AppSettings["Secret"];
+            var clientId = ConfigurationManager.AppSettings["ClientId"];
 
             if (!string.IsNullOrWhiteSpace(identityServerUrl))
             {
-                //app.Use(async (context, next) =>
-                //{
-                //    if (string.IsNullOrWhiteSpace(context.Request.Headers["Authorization"]))
-                //    {
-                //        if (context.Request.QueryString.HasValue)
-                //        {
-                //            var token = context.Request.Query["Access_Token"];
-                //            if (!string.IsNullOrWhiteSpace(token))
-                //            {
-                //                context.Request.Headers.Add("Authorization", new[] { $"Bearer {token}" });
-                //            }
-                //        }
-                //    }
-                //    await next.Invoke();
-                //});
                 app.UseCookieAuthentication(new CookieAuthenticationOptions());
                 app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
                 {
                     Authority = identityServerUrl,
                     ClientId = clientId,
-                    Scope = "openid profile testapi offline_access",
+                    Scope = "openid profile testapi",
                     ClientSecret = secret,
                     RedirectUri = basePath + "/signin-oidc",
                     PostLogoutRedirectUri = basePath,
                     ResponseType = "id_token token code",
                     SignInAsAuthenticationType = "Cookies",
-                    
-                    //RequireHttpsMetadata = false,
+
                     Notifications = new OpenIdConnectAuthenticationNotifications
                     {
                         SecurityTokenValidated = async n =>
