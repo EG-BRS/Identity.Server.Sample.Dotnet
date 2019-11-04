@@ -1,0 +1,16 @@
+﻿@using System.Security.Claims
+@model ClaimsPrincipal
+
+@{
+    ViewBag.Title = "Token";
+}
+
+<h2>Claims and tokens</h2>
+
+<dl>
+    @foreach (var claim in @Model.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
