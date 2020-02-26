@@ -7,7 +7,7 @@ namespace HybridAndClientCredentials.Clasic
 {
     public class Constants
     {
-        public const string BaseAddress = "https://logintest.xena.biz";
+        public const string BaseAddress = "https://login.xena.biz";
 
         public const string AuthorizeEndpoint = BaseAddress + "/connect/authorize";
         public const string LogoutEndpoint = BaseAddress + "/connect/endsession";

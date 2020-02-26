@@ -1,7 +1,6 @@
-﻿const XenaApi = "https://test.xena.biz/Api";
-const XenaLogin = "https://logintest.xena.biz";
+﻿const XenaApi = "https://my.xena.biz/Api";
+const XenaLogin = "https://login.xena.biz";
 const ClientId = "[YOUR CLIENT ID]";
-
 
 var config = {
     authority: XenaLogin,
