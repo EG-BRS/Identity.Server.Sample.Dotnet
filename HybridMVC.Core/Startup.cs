@@ -13,6 +13,7 @@ using HybridMVC.Core.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using IdentityModel;
+using Microsoft.AspNetCore.Http;
 
 namespace HybridMVC.Core
 {
@@ -54,7 +55,11 @@ namespace HybridMVC.Core
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = AuthenticationConstants.XenaOidcAuthenticationScheme;
                 })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        options.Cookie.SameSite = SameSiteMode.None;
+                    })
                 .AddOpenIdConnect(AuthenticationConstants.XenaOidcAuthenticationScheme, options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
