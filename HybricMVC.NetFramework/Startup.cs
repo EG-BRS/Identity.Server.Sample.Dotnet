@@ -6,6 +6,9 @@ using Owin;
 using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
+using System.Web;
+using HybricMVC.NetFramework.Extensions;
+using Microsoft.Owin.Host.SystemWeb;
 
 [assembly: OwinStartup(typeof(HybricMVC.NetFramework.Startup))]
 namespace HybricMVC.NetFramework
@@ -21,7 +24,11 @@ namespace HybricMVC.NetFramework
 
             if (!string.IsNullOrWhiteSpace(identityServerUrl))
             {
-                app.UseCookieAuthentication(new CookieAuthenticationOptions());
+                app.UseCookieAuthentication(new CookieAuthenticationOptions()
+                {
+                    CookieSecure = CookieSecureOption.Always,
+                    CookieSameSite = Microsoft.Owin.SameSiteMode.None // for iframe in other apps (Xena plugin)
+                });
                 app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
                 {
                     Authority = identityServerUrl,
