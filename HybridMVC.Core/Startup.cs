@@ -87,25 +87,25 @@ namespace HybridMVC.Core
         public void Configure(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
-
+            app.UseRouting();
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedProto
             });
-
+            app.UseHttpsRedirection();
             app.UseAuthentication();
-
+            app.UseAuthorization();
             app.UseStaticFiles();
 
             // You can use this middleware or add automatic renew inside cookie middleware
             app.UseAutomaticSilentRenew();
             app.UseAccessTokenLifetime();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

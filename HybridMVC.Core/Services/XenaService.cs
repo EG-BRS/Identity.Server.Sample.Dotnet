@@ -3,9 +3,10 @@ using HybridMVC.Core.Configuration.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityModel.Client;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace HybridMVC.Core.Services
 {

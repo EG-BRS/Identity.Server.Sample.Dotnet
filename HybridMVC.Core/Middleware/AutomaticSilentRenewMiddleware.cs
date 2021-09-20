@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace HybridMVC.Core.Middleware
 {
@@ -41,9 +42,17 @@ namespace HybridMVC.Core.Middleware
                 // Renew access token if pass halfway of its lifetime
                 if (tokenInfo.ValidFrom + (tokenInfo.ValidTo - tokenInfo.ValidFrom) / 2 < DateTime.UtcNow)
                 {
+                    using var client = new HttpClient();
                     var disco = await _discoveryCache.GetAsync();
 
-                    TokenClient tokenClient = new TokenClient(disco.TokenEndpoint, _clientId, _clientSecret);
+                    TokenClient tokenClient = new TokenClient(client, new TokenClientOptions
+                    {
+                        Address = disco.TokenEndpoint,
+                        ClientId = _clientId,
+                        ClientSecret = _clientSecret
+
+                    });
+                    
                     string oldRefreshToken = await context.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
                     TokenResponse tokenResult = await tokenClient.RequestRefreshTokenAsync(oldRefreshToken);
 
